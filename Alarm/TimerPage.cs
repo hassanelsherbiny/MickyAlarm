@@ -75,45 +75,32 @@ namespace Alarm
             int month = DateTime.Now.Month;
             int year = DateTime.Now.Year;
             ((sender as Control).Parent.Parent as TabPage).Text = alarmname.Text;
-            
-            hours = mcombo.SelectedItem.ToString() == "PM" ? hours+12 : hours;
+
+            hours = mcombo.SelectedItem.ToString() == "PM" ? hours + 12 : hours;
+            DateTime alarmtime = new DateTime(year, month, day, hours, minuts, seconds);
             if (countdownto.Checked)
             {
-                seconds += DateTime.Now.Second;
-                minuts += DateTime.Now.Minute;
-                hours += DateTime.Now.Hour;
-                if (seconds >= 60)
-                {
-                    seconds -= 60;
-                    minuts++;
-                }
-                if (minuts >= 60)
-                {
-                    minuts -= 60;
-                    hours++;
-                }
-            }
-            
-            if (hours >= 24)
-            {
-                hours -= 24;
-                day++;
+                alarmtime = DateTime.Now;
+                alarmtime = alarmtime.AddSeconds(seconds);
+                alarmtime = alarmtime.AddMinutes(minuts);
+                alarmtime = alarmtime.AddHours(hours);
             }
 
             Alaram.TaskType task = Alaram.TaskType.None;
             if (taskbtn.Checked)
             {
-                if(shutdownbtn.Checked)
+                if (shutdownbtn.Checked)
                     task = Alaram.TaskType.ShutDown;
-                else if(restartbtn.Checked)
-                     task = Alaram.TaskType.Restart;
-                else if(lockbtn.Checked)
-                     task = Alaram.TaskType.Lock;
-                else if(sleepbtn.Checked)
+                else if (restartbtn.Checked)
+                    task = Alaram.TaskType.Restart;
+                else if (lockbtn.Checked)
+                    task = Alaram.TaskType.Lock;
+                else if (sleepbtn.Checked)
                     task = Alaram.TaskType.Sleep;
             }
-            DateTime alarmtime = new DateTime(year, month, day, hours, minuts, seconds);
-            myalarm = new Alaram(alarmtime, alarmtxt.Text, alarmname.Text, alarmtonetxt.Text,task);
+
+            // DateTime alarmtime = new DateTime(year, month, day, hours, minuts, seconds);
+            myalarm = new Alaram(alarmtime, alarmtxt.Text, alarmname.Text, alarmtonetxt.Text, task);
             myalarm.AlarmEnd += editalarm_Click;
             foreach (Control c in this.Controls)
                 c.Visible = false;
@@ -122,7 +109,7 @@ namespace Alarm
             if (countdownto.Checked)
             {
                 AlarmTimeShow.Text = "Alarm Runs After";
-                
+
                 t.Tick += (s, ex) => { countdown(alarmtime); };
                 t.Interval = 1;
                 t.Enabled = true;
@@ -130,12 +117,12 @@ namespace Alarm
             }
             else
             {
-            AlarmTimeLabel.Text = alarmtime.ToLongTimeString();
-            AlarmTimeShow.Text = "Alarm Set To";
+                AlarmTimeLabel.Text = alarmtime.ToLongTimeString();
+                AlarmTimeShow.Text = "Alarm Set To";
             }
-            
+
         }
-        
+
         private void countdown(DateTime alarmtime)
         {
 
@@ -143,7 +130,7 @@ namespace Alarm
             int mins = (alarmtime.Subtract(DateTime.Now)).Minutes;
             int seconds = (alarmtime.Subtract(DateTime.Now)).Seconds;
 
-            AlarmTimeLabel.Text =string.Format("{0:00}:{1:00}:{2:00}",hours,mins,seconds);
+            AlarmTimeLabel.Text = string.Format("{0:00}:{1:00}:{2:00}", hours, mins, seconds);
         }
         private void Deletalarm_Click(object sender, EventArgs e)
         {
@@ -164,9 +151,9 @@ namespace Alarm
 
         private void countdownto_CheckedChanged(object sender, EventArgs e)
         {
-                hoursnum.Minimum = 0;
-                mcombo.Enabled = false;
-                mcombo.SelectedIndex = 0;
+            hoursnum.Minimum = 0;
+            mcombo.Enabled = false;
+            mcombo.SelectedIndex = 0;
         }
 
         private void alarmat_CheckedChanged(object sender, EventArgs e)
@@ -193,7 +180,7 @@ namespace Alarm
 
         private void Taskbtn_CheckedChanged(object sender, EventArgs e)
         {
-            if ( taskbtn.Checked)
+            if (taskbtn.Checked)
             {
                 this.alarmtxt.Visible = false;
                 Tasks.Visible = true;
